@@ -21,7 +21,8 @@ while test $# -gt 0; do
       shift
       ;;
     --expiry*)
-      expiry=`echo $1 | sed -e 's/^[^=]*=//g'`
+      shift
+      expiry=$1
       shift
       ;;
     *)
