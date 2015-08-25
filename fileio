@@ -2,18 +2,34 @@
 set -eu
 
 expiry=""
+result=""
+
+usage_info () {
+  echo "file.io utility"
+  echo " "
+  echo "file.io [options] path"
+  echo " "
+  echo "options:"
+  echo "-h, --help                these instructions"
+  echo "-e, --expiry=amount       specify when it will expire - e.g 1w, 1m, 3d..."
+  exit 0
+}
+
+request () {
+  echo "Uploading to file.io..."
+  result=$(curl -sF $file $endpoint)
+}
+
+fail () {
+  exit_code=$?
+  echo "Failed to upload the file -> cURL exit code: $exit_code"
+  exit $exit_code
+}
 
 while test $# -gt 0; do
   case "$1" in
     -h|--help)
-      echo "file.io utility"
-      echo " "
-      echo "file.io [options] path"
-      echo " "
-      echo "options:"
-      echo "-h, --help                these instructions"
-      echo "-e, --expiry=amount       specify when it will expire - e.g 1w, 1m, 3d..."
-      exit 0
+      usage_info
       ;;
     -e)
       shift
@@ -33,18 +49,6 @@ done
 
 endpoint="https://file.io/?expires=$expiry"
 file="file=@$1"
-result=""
-
-request () {
-  echo "Uploading to file.io..."
-  result=$(curl -sF $file $endpoint)
-}
-
-fail () {
-  exit_code=$?
-  echo "Failed to upload the file -> cURL exit code: $exit_code"
-  exit $exit_code
-}
 
 request || fail
 
