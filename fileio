@@ -26,26 +26,20 @@ fail () {
   exit $exit_code
 }
 
-while test $# -gt 0; do
+if [[ $# -eq 0 ]]; then
+  usage_info
+else
   case "$1" in
     -h|--help)
       usage_info
       ;;
-    -e)
+    -e|--expiry*)
       shift
       expiry=$1
       shift
-      ;;
-    --expiry*)
-      shift
-      expiry=$1
-      shift
-      ;;
-    *)
-      break
       ;;
   esac
-done
+fi
 
 endpoint="https://file.io/?expires=$expiry"
 file="file=@$1"
