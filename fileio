@@ -1,0 +1,55 @@
+#!/bin/bash
+set -eu
+
+expiry=""
+
+while test $# -gt 0; do
+  case "$1" in
+    -h|--help)
+      echo "file.io utility"
+      echo " "
+      echo "file.io [options] path"
+      echo " "
+      echo "options:"
+      echo "-h, --help                these instructions"
+      echo "-e, --expiry=amount       specify when it will expire - e.g 1w, 1m, 3d..."
+      exit 0
+      ;;
+    -e)
+      shift
+      expiry=$1
+      shift
+      ;;
+    --expiry*)
+      expiry=`echo $1 | sed -e 's/^[^=]*=//g'`
+      shift
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+endpoint="https://file.io/?expires=$expiry"
+file="file=@$1"
+result=""
+
+request () {
+  echo "Uploading to file.io..."
+  result=$(curl -sF $file $endpoint)
+}
+
+fail () {
+  exit_code=$?
+  echo "Failed to upload the file -> cURL exit code: $exit_code"
+  exit $exit_code
+}
+
+request || fail
+
+link=$(echo $result | awk -F'"' '{ print $10 }')
+valid_until=$(echo $result | awk -F'"' '{ print $14 }')
+
+echo $link | pbcopy
+echo "Link: $link -> already available in your clipboard!"
+echo "It will expire in $valid_until"
