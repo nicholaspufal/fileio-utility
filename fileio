@@ -9,9 +9,9 @@ usage_info () {
   echo " "
   echo "file.io [options] path"
   echo " "
-  echo "options:"
+  echo "Options:"
   echo "-h, --help                these instructions"
-  echo "-e, --expiry=amount       specify when it will expire - e.g 1w, 1m, 3d..."
+  echo "-e, --expiry=AMOUNT       specify when it will expire - e.g. 1w, 1m, 3d..."
   exit 0
 }
 
